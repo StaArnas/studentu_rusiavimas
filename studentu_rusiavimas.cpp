@@ -5,6 +5,7 @@
 #include <limits>
 #include <iomanip>
 #include <algorithm>
+#include <random>
 
 using namespace std;
 
@@ -21,6 +22,7 @@ double skaiciuotiVidurki(const vector<int>& nd);
 double skaiciuotiMediana(vector<int> nd);
 double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas);
 void ivestiDuomenis(vector<Studentas>& studentai);
+void generuotiDuomenis(vector<Studentas>& studentai);
 void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas);
 
 int main() {
@@ -30,7 +32,8 @@ int main() {
     do {
         cout << "\n--- Meniu ---\n"
              << "1. Ivesti duomenis ranka\n"
-             << "2. Baigti darba\n"
+             << "2. Generuoti duomenis atsitiktinai\n"
+             << "3. Baigti darba\n"
              << "Jusu pasirinkimas: ";
         cin >> pasirinkimas;
 
@@ -43,34 +46,38 @@ int main() {
         switch (pasirinkimas) {
             case '1':
                 ivestiDuomenis(studentai);
-                
-                if (!studentai.empty()) {
-                    char formatoPasirinkimas;
-                    do {
-                        cout << "\nPasirinkite, kaip atvaizduoti galutini bala:\n"
-                             << "1. Pagal vidurki\n"
-                             << "2. Pagal mediana\n"
-                             << "Jusu pasirinkimas: ";
-                        cin >> formatoPasirinkimas;
-                        if (formatoPasirinkimas != '1' && formatoPasirinkimas != '2') {
-                            cout << "Neteisingas pasirinkimas. Iveskite 1 arba 2.\n";
-                        }
-                    } while (formatoPasirinkimas != '1' && formatoPasirinkimas != '2');
-                    
-                    spausdintiRezultatus(studentai, formatoPasirinkimas);
-                }
-                
-                studentai.clear();
                 break;
             case '2':
+                generuotiDuomenis(studentai);
+                break;
+            case '3':
                 cout << "Programa baigia darba.\n";
                 break;
             default:
                 cout << "Neteisingas pasirinkimas. Bandykite dar karta.\n";
-                break;
+                continue; 
         }
 
-    } while (pasirinkimas != '2');
+        if (pasirinkimas == '1' || pasirinkimas == '2') {
+            if (!studentai.empty()) {
+                char formatoPasirinkimas;
+                do {
+                    cout << "\nPasirinkite, kaip atvaizduoti galutini bala:\n"
+                         << "1. Pagal vidurki\n"
+                         << "2. Pagal mediana\n"
+                         << "Jusu pasirinkimas: ";
+                    cin >> formatoPasirinkimas;
+                    if (formatoPasirinkimas != '1' && formatoPasirinkimas != '2') {
+                        cout << "Neteisingas pasirinkimas. Iveskite 1 arba 2.\n";
+                    }
+                } while (formatoPasirinkimas != '1' && formatoPasirinkimas != '2');
+                
+                spausdintiRezultatus(studentai, formatoPasirinkimas);
+            }
+            studentai.clear();
+        }
+
+    } while (pasirinkimas != '3');
 
     return 0;
 }
@@ -135,6 +142,36 @@ void ivestiDuomenis(vector<Studentas>& studentai) {
         cin >> testi;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     } 
+}
+
+void generuotiDuomenis(vector<Studentas>& studentai) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> pazymiuDist(1, 10);
+    uniform_int_distribution<> ndSkaiciausDist(1, 15);
+
+    int studentuSk;
+    cout << "Kiek studentu sugeneruoti? ";
+    cin >> studentuSk;
+
+    for (int i = 1; i <= studentuSk; ++i) {
+        Studentas temp;
+        temp.vardas = "Vardas" + to_string(i);
+        temp.pavarde = "Pavarde" + to_string(i);
+
+        int ndSkaicius = ndSkaiciausDist(gen);
+        for (int j = 0; j < ndSkaicius; ++j) {
+            temp.nd.push_back(pazymiuDist(gen));
+        }
+
+        temp.egzaminas = pazymiuDist(gen);
+
+        temp.galutinisVid = skaiciuotiGalutini(skaiciuotiVidurki(temp.nd), temp.egzaminas);
+        temp.galutinisMed = skaiciuotiGalutini(skaiciuotiMediana(temp.nd), temp.egzaminas);
+        
+        studentai.push_back(temp);
+    }
+    cout << studentuSk << " studentu duomenys sugeneruoti.\n";
 }
 
 void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas) {
