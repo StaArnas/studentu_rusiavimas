@@ -126,15 +126,32 @@ void ivestiDuomenis(vector<Studentas>& studentai) {
 
 void spausdintiRezultatus(const vector<Studentas>& studentai) {
     if (studentai.empty()) {
-        cout << "Studentu sarasas tuscias." << endl;
+        cout << "Studentu sarasas tuscias.\n";
         return;
     }
 
-    cout << "\n--- Studentu Rezultatai ---\n";
-    cout << left << setw(15) << "Pavarde" << setw(15) << "Vardas" << endl;
-    cout << "------------------------------" << endl;
+    size_t maxVardasPlotis = 6;
+    size_t maxPavardePlotis = 7;
+    for (const auto& s : studentai) {
+        if (s.vardas.length() > maxVardasPlotis) {
+            maxVardasPlotis = s.vardas.length();
+        }
+        if (s.pavarde.length() > maxPavardePlotis) {
+            maxPavardePlotis = s.pavarde.length();
+        }
+    }
+
+    cout << "\n" << left 
+         << setw(maxPavardePlotis + 2) << "Pavarde"
+         << setw(maxVardasPlotis + 2) << "Vardas"
+         << setw(20) << "Galutinis (Vid.)\n";
+
+    cout << string(maxPavardePlotis + maxVardasPlotis + 44, '-') << "\n";
 
     for (const auto& s : studentai) {
-        cout << left << setw(15) << s.pavarde << setw(15) << s.vardas << endl;
+        cout << left
+             << setw(maxPavardePlotis + 2) << s.pavarde
+             << setw(maxVardasPlotis + 2) << s.vardas
+             << fixed << setprecision(2) << setw(20) << s.galutinisVid << "\n";
     }
 }
