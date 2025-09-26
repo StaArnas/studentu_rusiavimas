@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// Struktūra, skirta studento duomenims saugoti.
 struct Studentas {
     string vardas;
     string pavarde;
@@ -20,6 +21,7 @@ struct Studentas {
     double galutinisMed;
 };
 
+// Funkcijų prototipai
 double skaiciuotiVidurki(const vector<int>& nd);
 double skaiciuotiMediana(vector<int> nd);
 double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas);
@@ -28,10 +30,12 @@ void generuotiDuomenis(vector<Studentas>& studentai);
 void nuskaitytiIsFailo(vector<Studentas>& studentai, const string& failoVardas);
 void spausdintiRezultatus(const vector<Studentas>& studentai);
 
+// Pagrindinė programos funkcija, valdanti meniu ir vartotojo pasirinkimus.
 int main() {
     vector<Studentas> studentai;
     char pasirinkimas;
 
+    // Pagrindinis meniu ciklas, kuris veikia tol, kol vartotojas nepasirenka '4'
     do {
         cout << "\n--- Meniu ---\n"
              << "1. Ivesti duomenis ranka\n"
@@ -41,6 +45,7 @@ int main() {
              << "Jusu pasirinkimas: ";
         cin >> pasirinkimas;
 
+        // Patikrinimas, ar įvestis nebuvo klaidinga (pvz., ne skaičius)
         if (cin.fail()) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -77,11 +82,13 @@ int main() {
     return 0;
 }
 
+// Apskaičiuoja namų darbų pažymių vidurkį.
 double skaiciuotiVidurki(const vector<int>& nd) {
     if (nd.empty()) return 0.0;
     return accumulate(nd.begin(), nd.end(), 0.0) / nd.size();
 }
 
+// Apskaičiuoja namų darbų pažymių medianą.
 double skaiciuotiMediana(vector<int> nd) {
     if (nd.empty()) return 0.0;
     sort(nd.begin(), nd.end());
@@ -93,10 +100,12 @@ double skaiciuotiMediana(vector<int> nd) {
     }
 }
 
+// Apskaičiuoja galutinį balą pagal formulę: 0.4 * vidurkis/mediana + 0.6 * egzaminas.
 double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas) {
     return 0.4 * vidurkisArMediana + 0.6 * egzaminas;
 }
 
+// Nuskaito studentų duomenis iš failo.
 void nuskaitytiIsFailo(vector<Studentas>& studentai, const string& failoVardas) {
     ifstream failas(failoVardas);
     if (!failas) {
@@ -136,6 +145,7 @@ void nuskaitytiIsFailo(vector<Studentas>& studentai, const string& failoVardas) 
     cout << "Duomenys is failo '" << failoVardas << "' nuskaityti sekmingai.\n";
 }
 
+// Leidžia vartotojui rankiniu būdu įvesti studentų duomenis.
 void ivestiDuomenis(vector<Studentas>& studentai) {
     char testi = 't';
     while (testi == 't' || testi == 'T') {
@@ -178,6 +188,7 @@ void ivestiDuomenis(vector<Studentas>& studentai) {
     } 
 }
 
+// Sugeneruoja nurodytą kiekį studentų su atsitiktiniais duomenimis.
 void generuotiDuomenis(vector<Studentas>& studentai) {
     random_device rd;
     mt19937 gen(rd());
@@ -208,6 +219,7 @@ void generuotiDuomenis(vector<Studentas>& studentai) {
     cout << studentuSk << " studentu duomenys sugeneruoti.\n";
 }
 
+// Išspausdina studentų galutinius rezultatus surikiuotus pagal vardą.
 void spausdintiRezultatus(const vector<Studentas>& studentai) {
     if (studentai.empty()) {
         cout << "Studentu sarasas tuscias.\n";
