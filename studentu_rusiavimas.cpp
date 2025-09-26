@@ -4,6 +4,7 @@
 #include <numeric>
 #include <limits>
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
@@ -16,6 +17,9 @@ struct Studentas {
     double galutinisMed;
 };
 
+double skaiciuotiVidurki(const vector<int>& nd);
+double skaiciuotiMediana(vector<int> nd);
+double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas);
 void ivestiDuomenis(vector<Studentas>& studentai);
 void spausdintiRezultatus(const vector<Studentas>& studentai);
 
@@ -55,6 +59,27 @@ int main() {
     return 0;
 }
 
+double skaiciuotiVidurki(const vector<int>& nd) {
+    if (nd.empty()) return 0.0;
+    // std::accumulate susumuoja visus vektoriaus elementus
+    return accumulate(nd.begin(), nd.end(), 0.0) / nd.size();
+}
+
+double skaiciuotiMediana(vector<int> nd) {
+    if (nd.empty()) return 0.0;
+    sort(nd.begin(), nd.end());
+    size_t dydis = nd.size();
+    if (dydis % 2 == 0) {
+        return (nd[dydis / 2 - 1] + nd[dydis / 2]) / 2.0;
+    } else {
+        return nd[dydis / 2];
+    }
+}
+
+double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas) {
+    return 0.4 * vidurkisArMediana + 0.6 * egzaminas;
+}
+
 void ivestiDuomenis(vector<Studentas>& studentai) {
     char testi = 't';
     while (testi == 't' || testi == 'T') {
@@ -87,8 +112,8 @@ void ivestiDuomenis(vector<Studentas>& studentai) {
         
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        temp.galutinisVid = 0.0; // Placeholder
-        temp.galutinisMed = 0.0; // Placeholder
+        temp.galutinisVid = skaiciuotiGalutini(skaiciuotiVidurki(temp.nd), temp.egzaminas);
+        temp.galutinisMed = skaiciuotiGalutini(skaiciuotiMediana(temp.nd), temp.egzaminas);
 
         studentai.push_back(temp);
 
