@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <algorithm>
 #include <random>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -23,6 +25,7 @@ double skaiciuotiMediana(vector<int> nd);
 double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas);
 void ivestiDuomenis(vector<Studentas>& studentai);
 void generuotiDuomenis(vector<Studentas>& studentai);
+void nuskaitytiIsFailo(vector<Studentas>& studentai, const string& failoVardas);
 void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas);
 
 int main() {
@@ -33,7 +36,8 @@ int main() {
         cout << "\n--- Meniu ---\n"
              << "1. Ivesti duomenis ranka\n"
              << "2. Generuoti duomenis atsitiktinai\n"
-             << "3. Baigti darba\n"
+             << "3. Nuskaityti duomenis is failo 'kursiokai.txt'\n"
+             << "4. Baigti darba\n"
              << "Jusu pasirinkimas: ";
         cin >> pasirinkimas;
 
@@ -51,6 +55,9 @@ int main() {
                 generuotiDuomenis(studentai);
                 break;
             case '3':
+                nuskaitytiIsFailo(studentai, "kursiokai.txt");
+                break;
+            case '4':
                 cout << "Programa baigia darba.\n";
                 break;
             default:
@@ -58,7 +65,7 @@ int main() {
                 continue; 
         }
 
-        if (pasirinkimas == '1' || pasirinkimas == '2') {
+        if (pasirinkimas == '1' || pasirinkimas == '2' || pasirinkimas == '3') {
             if (!studentai.empty()) {
                 char formatoPasirinkimas;
                 do {
@@ -77,7 +84,7 @@ int main() {
             studentai.clear();
         }
 
-    } while (pasirinkimas != '3');
+    } while (pasirinkimas != '4');
 
     return 0;
 }
@@ -100,6 +107,45 @@ double skaiciuotiMediana(vector<int> nd) {
 
 double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas) {
     return 0.4 * vidurkisArMediana + 0.6 * egzaminas;
+}
+
+void nuskaitytiIsFailo(vector<Studentas>& studentai, const string& failoVardas) {
+    ifstream failas(failoVardas);
+    if (!failas) {
+        cerr << "Klaida: Nepavyko atidaryti failo '" << failoVardas << "'\n";
+        return;
+    }
+
+    string eilute;
+    getline(failas, eilute);
+
+    while (getline(failas, eilute)) {
+        stringstream ss(eilute);
+        Studentas temp;
+        int pazymys;
+        
+        ss >> temp.pavarde >> temp.vardas;
+
+        vector<int> pazymiai;
+        while(ss >> pazymys) {
+            pazymiai.push_back(pazymys);
+        }
+
+        if (!pazymiai.empty()) {
+            temp.egzaminas = pazymiai.back();
+            pazymiai.pop_back();
+            temp.nd = pazymiai;
+        } else {
+            temp.egzaminas = 0;
+        }
+
+        temp.galutinisVid = skaiciuotiGalutini(skaiciuotiVidurki(temp.nd), temp.egzaminas);
+        temp.galutinisMed = skaiciuotiGalutini(skaiciuotiMediana(temp.nd), temp.egzaminas);
+
+        studentai.push_back(temp);
+    }
+    failas.close();
+    cout << "Duomenys is failo '" << failoVardas << "' nuskaityti sekmingai.\n";
 }
 
 void ivestiDuomenis(vector<Studentas>& studentai) {
