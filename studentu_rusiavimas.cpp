@@ -214,9 +214,20 @@ void spausdintiRezultatus(const vector<Studentas>& studentai) {
         return;
     }
 
+    vector<Studentas> surikiuotiStudentai = studentai;
+
+    sort(surikiuotiStudentai.begin(), surikiuotiStudentai.end(), 
+        [](const Studentas& a, const Studentas& b) {
+            if (a.vardas != b.vardas) {
+                return a.vardas < b.vardas;
+            }
+            return a.pavarde < b.pavarde;
+        });
+
+
     size_t maxVardasPlotis = 6;
     size_t maxPavardePlotis = 7;
-    for (const auto& s : studentai) {
+    for (const auto& s : surikiuotiStudentai) {
         if (s.vardas.length() > maxVardasPlotis) {
             maxVardasPlotis = s.vardas.length();
         }
@@ -233,7 +244,7 @@ void spausdintiRezultatus(const vector<Studentas>& studentai) {
 
     cout << string(maxPavardePlotis + maxVardasPlotis + 4 + 40, '-') << "\n";
 
-    for (const auto& s : studentai) {
+    for (const auto& s : surikiuotiStudentai) {
         cout << left
              << setw(maxPavardePlotis + 2) << s.pavarde
              << setw(maxVardasPlotis + 2) << s.vardas
