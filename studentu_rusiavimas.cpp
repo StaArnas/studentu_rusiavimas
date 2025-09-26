@@ -21,7 +21,7 @@ double skaiciuotiVidurki(const vector<int>& nd);
 double skaiciuotiMediana(vector<int> nd);
 double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas);
 void ivestiDuomenis(vector<Studentas>& studentai);
-void spausdintiRezultatus(const vector<Studentas>& studentai);
+void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas);
 
 int main() {
     vector<Studentas> studentai;
@@ -43,7 +43,23 @@ int main() {
         switch (pasirinkimas) {
             case '1':
                 ivestiDuomenis(studentai);
-                spausdintiRezultatus(studentai); 
+                
+                if (!studentai.empty()) {
+                    char formatoPasirinkimas;
+                    do {
+                        cout << "\nPasirinkite, kaip atvaizduoti galutini bala:\n"
+                             << "1. Pagal vidurki\n"
+                             << "2. Pagal mediana\n"
+                             << "Jusu pasirinkimas: ";
+                        cin >> formatoPasirinkimas;
+                        if (formatoPasirinkimas != '1' && formatoPasirinkimas != '2') {
+                            cout << "Neteisingas pasirinkimas. Iveskite 1 arba 2.\n";
+                        }
+                    } while (formatoPasirinkimas != '1' && formatoPasirinkimas != '2');
+                    
+                    spausdintiRezultatus(studentai, formatoPasirinkimas);
+                }
+                
                 studentai.clear();
                 break;
             case '2':
@@ -61,7 +77,6 @@ int main() {
 
 double skaiciuotiVidurki(const vector<int>& nd) {
     if (nd.empty()) return 0.0;
-    // std::accumulate susumuoja visus vektoriaus elementus
     return accumulate(nd.begin(), nd.end(), 0.0) / nd.size();
 }
 
@@ -83,7 +98,6 @@ double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas) {
 void ivestiDuomenis(vector<Studentas>& studentai) {
     char testi = 't';
     while (testi == 't' || testi == 'T') {
-
         Studentas temp;
         cout << "Iveskite studento varda: ";
         cin >> temp.vardas;
@@ -120,11 +134,10 @@ void ivestiDuomenis(vector<Studentas>& studentai) {
         cout << "Ar norite ivesti dar viena studenta? (t/n): ";
         cin >> testi;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    
     } 
 }
 
-void spausdintiRezultatus(const vector<Studentas>& studentai) {
+void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas) {
     if (studentai.empty()) {
         cout << "Studentu sarasas tuscias.\n";
         return;
@@ -143,15 +156,26 @@ void spausdintiRezultatus(const vector<Studentas>& studentai) {
 
     cout << "\n" << left 
          << setw(maxPavardePlotis + 2) << "Pavarde"
-         << setw(maxVardasPlotis + 2) << "Vardas"
-         << setw(20) << "Galutinis (Vid.)\n";
+         << setw(maxVardasPlotis + 2) << "Vardas";
 
-    cout << string(maxPavardePlotis + maxVardasPlotis + 44, '-') << "\n";
+    if (formatas == '1') {
+        cout << setw(20) << "Galutinis (Vid.)\n";
+    } else {
+        cout << setw(20) << "Galutinis (Med.)\n";
+    }
+
+    cout << string(maxPavardePlotis + maxVardasPlotis + 4 + 20, '-') << "\n";
 
     for (const auto& s : studentai) {
         cout << left
              << setw(maxPavardePlotis + 2) << s.pavarde
              << setw(maxVardasPlotis + 2) << s.vardas
-             << fixed << setprecision(2) << setw(20) << s.galutinisVid << "\n";
+             << fixed << setprecision(2);
+        
+        if (formatas == '1') {
+            cout << setw(20) << s.galutinisVid << "\n";
+        } else {
+            cout << setw(20) << s.galutinisMed << "\n";
+        }
     }
 }
