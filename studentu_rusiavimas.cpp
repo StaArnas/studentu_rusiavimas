@@ -26,7 +26,7 @@ double skaiciuotiGalutini(double vidurkisArMediana, int egzaminas);
 void ivestiDuomenis(vector<Studentas>& studentai);
 void generuotiDuomenis(vector<Studentas>& studentai);
 void nuskaitytiIsFailo(vector<Studentas>& studentai, const string& failoVardas);
-void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas);
+void spausdintiRezultatus(const vector<Studentas>& studentai);
 
 int main() {
     vector<Studentas> studentai;
@@ -67,19 +67,7 @@ int main() {
 
         if (pasirinkimas == '1' || pasirinkimas == '2' || pasirinkimas == '3') {
             if (!studentai.empty()) {
-                char formatoPasirinkimas;
-                do {
-                    cout << "\nPasirinkite, kaip atvaizduoti galutini bala:\n"
-                         << "1. Pagal vidurki\n"
-                         << "2. Pagal mediana\n"
-                         << "Jusu pasirinkimas: ";
-                    cin >> formatoPasirinkimas;
-                    if (formatoPasirinkimas != '1' && formatoPasirinkimas != '2') {
-                        cout << "Neteisingas pasirinkimas. Iveskite 1 arba 2.\n";
-                    }
-                } while (formatoPasirinkimas != '1' && formatoPasirinkimas != '2');
-                
-                spausdintiRezultatus(studentai, formatoPasirinkimas);
+                spausdintiRezultatus(studentai);
             }
             studentai.clear();
         }
@@ -220,7 +208,7 @@ void generuotiDuomenis(vector<Studentas>& studentai) {
     cout << studentuSk << " studentu duomenys sugeneruoti.\n";
 }
 
-void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas) {
+void spausdintiRezultatus(const vector<Studentas>& studentai) {
     if (studentai.empty()) {
         cout << "Studentu sarasas tuscias.\n";
         return;
@@ -239,26 +227,18 @@ void spausdintiRezultatus(const vector<Studentas>& studentai, char formatas) {
 
     cout << "\n" << left 
          << setw(maxPavardePlotis + 2) << "Pavarde"
-         << setw(maxVardasPlotis + 2) << "Vardas";
+         << setw(maxVardasPlotis + 2) << "Vardas"
+         << setw(20) << "Galutinis (Vid.)"
+         << setw(20) << "Galutinis (Med.)\n";
 
-    if (formatas == '1') {
-        cout << setw(20) << "Galutinis (Vid.)\n";
-    } else {
-        cout << setw(20) << "Galutinis (Med.)\n";
-    }
-
-    cout << string(maxPavardePlotis + maxVardasPlotis + 4 + 20, '-') << "\n";
+    cout << string(maxPavardePlotis + maxVardasPlotis + 4 + 40, '-') << "\n";
 
     for (const auto& s : studentai) {
         cout << left
              << setw(maxPavardePlotis + 2) << s.pavarde
              << setw(maxVardasPlotis + 2) << s.vardas
-             << fixed << setprecision(2);
-        
-        if (formatas == '1') {
-            cout << setw(20) << s.galutinisVid << "\n";
-        } else {
-            cout << setw(20) << s.galutinisMed << "\n";
-        }
+             << fixed << setprecision(2)
+             << setw(20) << s.galutinisVid 
+             << setw(20) << s.galutinisMed << "\n";
     }
 }
